@@ -63,10 +63,27 @@ $superheroes = [
   ], 
 ];
 
-?>
+$query = isset($_GET['query']) ? trim($_GET['query']) : '';
 
-<ul>
-<?php foreach ($superheroes as $superhero): ?>
-  <li><?= $superhero['alias']; ?></li>
-<?php endforeach; ?>
-</ul>
+if ($query) {
+    // Search for superhero by name or alias (case-insensitive)
+    $found = array_filter($superheroes, function ($superhero) use ($query) {
+        return stripos($superhero['name'], $query) !== false || stripos($superhero['alias'], $query) !== false;
+    });
+
+    if ($found) {
+        $superhero = reset($found); // Get the first match
+        echo "<h3>{$superhero['alias']}</h3>";
+        echo "<h4>{$superhero['name']}</h4>";
+        echo "<p>{$superhero['biography']}</p>";
+    } else {
+        echo "<p>Superhero not found</p>";
+    }
+} else {
+    echo "<ul>";
+    foreach ($superheroes as $superhero) {
+        echo "<li>{$superhero['alias']}</li>";
+    }
+    echo "</ul>";
+}
+?>
